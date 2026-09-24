@@ -1,26 +1,87 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #090a0f;
+    --foreground: #f4f4f5;
+    --card: #12151e;
+    --card-foreground: #f4f4f5;
+    --border: #27272a;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #090a0f;
+  color: #f4f4f5;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* OpenDesign Clean Card */
+.open-card {
+  background-color: #11131a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.open-card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.open-panel {
+  background-color: #0d0f15;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Infinite Marquee Animation for Candidate Carousel - Slower, relaxed speed */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  animation: marquee 68s linear infinite;
+}
+
+/* Card Transitions */
+@keyframes cardSlideLeft {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(-40px); opacity: 0; }
+}
+
+@keyframes cardSlideRight {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(40px); opacity: 0; }
+}
+
+@keyframes cardSlideUp {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-30px); opacity: 0; }
+}
+
+@keyframes cardEnter {
+  0% { transform: translateY(12px) scale(0.98); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.animate-card-left {
+  animation: cardSlideLeft 0.2s ease-out forwards;
+}
+
+.animate-card-right {
+  animation: cardSlideRight 0.2s ease-out forwards;
+}
+
+.animate-card-skip {
+  animation: cardSlideUp 0.18s ease-out forwards;
+}
+
+.animate-card-enter {
+  animation: cardEnter 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
