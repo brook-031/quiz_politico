@@ -44,8 +44,8 @@ export default function QuizIntro({ onStart }: QuizIntroProps) {
 
   // Ajusta os rótulos de contagem conforme a categoria escolhida
   const activeCatInfo = CATEGORIAS_QUIZ.find((c) => c.id === selectedCategory) || CATEGORIAS_QUIZ[0];
-  const expressCount = selectedCategory === "all" ? 32 : Math.min(32, activeCatInfo.count);
-  const aprofundadoCount = selectedCategory === "all" ? 48 : Math.min(48, activeCatInfo.count);
+  const expressCount = selectedCategory === "all" ? 40 : Math.min(40, activeCatInfo.count);
+  const aprofundadoCount = selectedCategory === "all" ? 64 : Math.min(64, activeCatInfo.count);
   const completoCount = activeCatInfo.count;
 
   return (
@@ -134,7 +134,7 @@ export default function QuizIntro({ onStart }: QuizIntroProps) {
               </span>
             </div>
             <p className="text-[11px] text-zinc-400 leading-snug">
-              32 propostas calibradas (8 de cada grande tema: Economia, Segurança, Trabalho e Sociedade, ~4 min).
+              40 propostas calibradas (10 de cada grande tema: Economia, Segurança, Trabalho e Sociedade, ~5 min).
             </p>
           </div>
 
@@ -158,7 +158,7 @@ export default function QuizIntro({ onStart }: QuizIntroProps) {
               </span>
             </div>
             <p className="text-[11px] text-zinc-400 leading-snug">
-              48 propostas calibradas (12 de cada tema com máxima precisão estatística, ~6 min).
+              64 propostas calibradas (16 de cada tema com máxima precisão estatística, ~8 min).
             </p>
           </div>
 
