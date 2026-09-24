@@ -2,42 +2,50 @@ import quizDb from "./quiz_db.json";
 import { Question } from "@/lib/match-engine";
 
 /**
- * Modo Rápido / Equilibrado: Exatamente 24 perguntas.
- * Divisão Perfeita dos 4 Pilares: 6 em Economia, 6 em Segurança, 6 em Trabalho e 6 em Sociedade.
- * Todos os 13 candidatos possuem posicionamento calibrado nas 24 perguntas, garantindo equidade matemática.
+ * Modo Rápido / Equilibrado: Exatamente 32 perguntas.
+ * Divisão Perfeita dos 4 Pilares: 8 em Economia, 8 em Segurança, 8 em Trabalho e 8 em Sociedade.
+ * Todos os 13 candidatos possuem posicionamento calibrado nas 32 perguntas, garantindo equidade matemática máxima.
  */
 export const QUESTOES_EXPRESS_IDS = [
-  // EIXO 1: Economia & Estado (6)
+  // EIXO 1: Economia & Estado (8)
   "q147", // Privatização ampla de estatais federais (Petrobras, Correios, bancos)
   "q131", // Elevar isenção do IRPF para até 5 salários mínimos
   "q12",  // Perseguir meta de déficit público zero e desvincular gastos federais
   "q25",  // Estatizar sistema bancário e criar Banco dos Trabalhadores
   "q58",  // Imposto Único de 3,5% sobre todas as transações financeiras
   "q82",  // Reduzir número de municípios em até 70% por fusão forçada
+  "q4",   // Rede de 10 mil Escolas de Empreendedorismo e crédito popular
+  "q11",  // Revisar partilha tributária e aumentar fatia de estados e municípios
 
-  // EIXO 2: Segurança Pública & Justiça (6)
+  // EIXO 2: Segurança Pública & Justiça (8)
   "q36",  // Reduzir a maioridade penal para 16 anos em crimes graves
   "q37",  // Instituir a castração química para condenados por estupro
   "q52",  // Desmilitarizar a PM e unificar as polícias sob comando civil
   "q97",  // Novo crime de enriquecimento incompatível e confisco de bens de facções
   "q141", // Prisão preventiva obrigatória na audiência de custódia para reincidentes
   "q110", // Extinguir o STF e instituir eleição popular de juízes e promotores
+  "q3",   // Programa Mulheres Vivas e tornozeleira em agressores
+  "q17",  // Monitoramento integral de fronteiras com drones e sensores remotos
 
-  // EIXO 3: Trabalho & Previdência (6)
+  // EIXO 3: Trabalho & Previdência (8)
   "q71",  // Reduzir jornada para 40h semanais e extinguir escala 6x1 sem corte salarial
   "q118", // Aumento imediato de 100% no salário mínimo nacional
   "q72",  // Regulamentar trabalho em plataformas e aplicativos com direitos CLT
   "q45",  // Prevalência do negociado sobre o legislado e veto a imposto sindical
   "q114", // Revogar reformas previdenciárias e garantir aposentadoria integral
   "q133", // Zerar contribuição patronal da previdência sobre a folha salarial
+  "q51",  // Reconhecer vínculo empregatício e criar fundo para trabalhadores por app
+  "q63",  // Limitar taxa cobrada por apps de corrida a no máximo 3,5%
 
-  // EIXO 4: Sociedade, Educação & Meio Ambiente (6)
+  // EIXO 4: Sociedade, Educação & Meio Ambiente (8)
   "q1",   // Ensino de inteligência socioemocional obrigatório nas escolas
   "q148", // Vouchers educacionais financiados pelo Estado para escolas privadas
   "q129", // Legalizar o aborto voluntário seguro e gratuito pelo SUS
   "q76",  // Regular redes sociais e plataformas para combater desinformação e ódio
   "q135", // SUS Animal com esterilização gratuita e hospitais veterinários públicos
   "q80",  // Regulamentar o mercado nacional de carbono e transição ecológica
+  "q2",   // Programa Brasil Neuroinclusivo (autismo e TDAH nas escolas)
+  "q5",   // Projeto Brasil Oásis (dessalinização massiva no Semiárido)
 ];
 
 /**
@@ -48,33 +56,25 @@ export const QUESTOES_EXPRESS_IDS = [
 export const QUESTOES_APROFUNDADO_IDS = [
   ...QUESTOES_EXPRESS_IDS,
 
-  // Economia (+6 = 12 total)
-  "q4",   // 10 mil Escolas de Empreendedorismo
-  "q11",  // Revisar partilha tributária e aumentar fatia de estados e municípios
+  // Economia (+4 = 12 total)
   "q26",  // Reestatizar todas as estatais e Petrobras 100% pública operária
   "q44",  // Reduzir ministérios e retomar Programa Nacional de Desestatização
   "q84",  // Desindexar benefícios da seguridade social do salário mínimo
   "q107", // Cancelar todas as privatizações realizadas no país
 
-  // Segurança (+6 = 12 total)
-  "q3",   // Programa Mulheres Vivas e tornozeleira em agressores
-  "q17",  // Monitoramento integral de fronteiras com drones e sensores remotos
+  // Segurança (+4 = 12 total)
   "q38",  // Cumprimento de 100% da pena em regime fechado para crimes hediondos
   "q95",  // Tipificar grandes facções como terrorismo doméstico (pena de 45 anos)
   "q100", // Cumprimento de 90% da pena em regime fechado para feminicidas
   "q144", // Extinguir o foro privilegiado para quase todas as autoridades
 
-  // Trabalho (+6 = 12 total)
+  // Trabalho (+4 = 12 total)
   "q27",  // Reduzir jornada para 30h semanais e abolir escala 6x1
   "q48",  // Reduzir jornada para 36h semanais sem corte salarial
-  "q51",  // Reconhecer vínculo empregatício e criar fundo para trabalhadores por app
-  "q63",  // Limitar taxa cobrada por apps de corrida a no máximo 3,5%
   "q109", // Reduzir jornada máxima para 35h semanais
   "q120", // Frentes Emergenciais Públicas de Trabalho para pleno emprego
 
-  // Sociedade, Educação & Meio Ambiente (+6 = 12 total)
-  "q2",   // Programa Brasil Neuroinclusivo (autismo e TDAH nas escolas)
-  "q5",   // Projeto Brasil Oásis (dessalinização massiva no Semiárido)
+  // Sociedade, Educação & Meio Ambiente (+4 = 12 total)
   "q46",  // Proteção integral da vida humana desde a concepção (veto ao aborto)
   "q56",  // Legalizar aborto seguro e gratuito no SUS sem interferência estatal
   "q79",  // Expandir exploração de novas reservas de petróleo pela Petrobras
@@ -158,7 +158,7 @@ export function obterQuestoesPorModo(modo: QuizModeType, categoria: QuizCategory
     if (modo === "express") {
       const mapa = new Map(todas.map((q) => [q.id, q]));
       const filtradas = QUESTOES_EXPRESS_IDS.map((id) => mapa.get(id)).filter(Boolean) as Question[];
-      return filtradas.length > 0 ? filtradas : todas.slice(0, 24);
+      return filtradas.length > 0 ? filtradas : todas.slice(0, 32);
     }
     if (modo === "aprofundado") {
       const mapa = new Map(todas.map((q) => [q.id, q]));
@@ -171,7 +171,7 @@ export function obterQuestoesPorModo(modo: QuizModeType, categoria: QuizCategory
   // Filtrado por categoria temática
   const filtradasCat = filtrarPorCategoria(todas, categoria);
   if (modo === "express") {
-    return filtradasCat.slice(0, Math.min(24, filtradasCat.length));
+    return filtradasCat.slice(0, Math.min(32, filtradasCat.length));
   }
   if (modo === "aprofundado") {
     return filtradasCat.slice(0, Math.min(48, filtradasCat.length));
