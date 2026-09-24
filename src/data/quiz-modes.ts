@@ -2,121 +2,83 @@ import quizDb from "./quiz_db.json";
 import { Question } from "@/lib/match-engine";
 
 /**
- * Modo Rápido / Equilibrado: Exatamente 26 perguntas (2 de cada um dos 13 candidatos).
- * 100% simétrico, democrático e justo: nenhum candidato fica com mais ou menos perguntas.
+ * Modo Rápido / Equilibrado: Exatamente 24 perguntas.
+ * Divisão Perfeita dos 4 Pilares: 6 em Economia, 6 em Segurança, 6 em Trabalho e 6 em Sociedade.
+ * Todos os 13 candidatos possuem posicionamento calibrado nas 24 perguntas, garantindo equidade matemática.
  */
 export const QUESTOES_EXPRESS_IDS = [
-  // 1. Augusto Cury (2)
-  "q1",   // Ensino de inteligência socioemocional obrigatório nas escolas
-  "q5",   // Projeto Brasil Oásis (dessalinização massiva no Semiárido)
+  // EIXO 1: Economia & Estado (6)
+  "q147", // Privatização ampla de estatais federais (Petrobras, Correios, bancos)
+  "q131", // Elevar isenção do IRPF para até 5 salários mínimos
+  "q12",  // Perseguir meta de déficit público zero e desvincular gastos federais
+  "q25",  // Estatizar sistema bancário e criar Banco dos Trabalhadores
+  "q58",  // Imposto Único de 3,5% sobre todas as transações financeiras
+  "q82",  // Reduzir número de municípios em até 70% por fusão forçada
 
-  // 2. Clariana Barão (2)
-  "q14",  // Vincular repasses voluntários da União ao cumprimento de metas públicas
-  "q17",  // Monitoramento integral de fronteiras com drones e sensores remotos
-
-  // 3. Edmilson Costa (2)
-  "q24",  // Extinguir o Senado e substituí-lo por Parlamento Unicameral popular
-  "q25",  // Estatizar todo o sistema bancário e financeiro (Banco dos Trabalhadores)
-
-  // 4. Flávio Bolsonaro (2)
-  "q36",  // Reduzir a maioridade penal para 16 anos
+  // EIXO 2: Segurança Pública & Justiça (6)
+  "q36",  // Reduzir a maioridade penal para 16 anos em crimes graves
   "q37",  // Instituir a castração química para condenados por estupro
+  "q52",  // Desmilitarizar a PM e unificar as polícias sob comando civil
+  "q97",  // Novo crime de enriquecimento incompatível e confisco de bens de facções
+  "q141", // Prisão preventiva obrigatória na audiência de custódia para reincidentes
+  "q110", // Extinguir o STF e instituir eleição popular de juízes e promotores
 
-  // 5. Hertz Dias (2)
-  "q48",  // Reduzir a jornada para 36 horas semanais sem corte salarial
-  "q52",  // Desmilitarizar a PM e unificar as polícias sob controle civil
-
-  // 6. Leonardo Avalanche (2)
-  "q58",  // Imposto Único de 3,5% na fonte sobre todas as transações
-  "q63",  // Limitar taxa cobrada por apps de corrida (Uber, 99) a no máximo 3,5%
-
-  // 7. Lula (2)
-  "q71",  // Reduzir a jornada para 40h semanais e extinguir escala 6x1 sem redução salarial
-  "q76",  // Regular redes sociais e plataformas para combater desinformação e ódio
-
-  // 8. Renan Santos (2)
-  "q82",  // Reduzir o número de municípios no país em até 70% por fusão forçada
-  "q83",  // Substituir Bolsa Família por trabalho comunitário nas Frentes Cidadãs
-
-  // 9. Ronaldo Caiado (2)
-  "q95",  // Tipificar facções como terrorismo doméstico (pena mínima de 45 anos)
-  "q97",  // Novo crime de enriquecimento incompatível (pena de até 40 anos)
-
-  // 10. Rui Costa Pimenta (2)
-  "q107", // Reestatizar sem indenização todas as privatizações realizadas
-  "q110", // Extinguir o STF e instituir eleição popular de todos os juízes
-
-  // 11. Samara (2)
+  // EIXO 3: Trabalho & Previdência (6)
+  "q71",  // Reduzir jornada para 40h semanais e extinguir escala 6x1 sem corte salarial
   "q118", // Aumento imediato de 100% no salário mínimo nacional
-  "q129", // Legalizar o aborto seguro e 100% gratuito através da rede do SUS
+  "q72",  // Regulamentar trabalho em plataformas e aplicativos com direitos CLT
+  "q45",  // Prevalência do negociado sobre o legislado e veto a imposto sindical
+  "q114", // Revogar reformas previdenciárias e garantir aposentadoria integral
+  "q133", // Zerar contribuição patronal da previdência sobre a folha salarial
 
-  // 12. Wilson Grassi (2)
-  "q131", // Elevar a faixa de isenção do IRPF para 5 salários mínimos mensais
-  "q133", // Zerar a contribuição patronal da previdência sobre a folha salarial
-
-  // 13. Romeu Zema (2)
-  "q141", // Prisão preventiva obrigatória na 3ª audiência de custódia
-  "q147", // Ampla privatização de empresas estatais (Petrobras, Correios, bancos)
+  // EIXO 4: Sociedade, Educação & Meio Ambiente (6)
+  "q1",   // Ensino de inteligência socioemocional obrigatório nas escolas
+  "q148", // Vouchers educacionais financiados pelo Estado para escolas privadas
+  "q129", // Legalizar o aborto voluntário seguro e gratuito pelo SUS
+  "q76",  // Regular redes sociais e plataformas para combater desinformação e ódio
+  "q135", // SUS Animal com esterilização gratuita e hospitais veterinários públicos
+  "q80",  // Regulamentar o mercado nacional de carbono e transição ecológica
 ];
 
 /**
- * Modo Aprofundado: Exatamente 52 perguntas (4 de cada um dos 13 candidatos).
- * Para quem deseja uma imersão completa e rigorosa em cada programa de governo.
+ * Modo Aprofundado: Exatamente 48 perguntas.
+ * 12 de Economia, 12 de Segurança, 12 de Trabalho e 12 de Sociedade/Educação.
+ * Ampla imersão com 100% de paridade temática e denominador balanceado.
  */
 export const QUESTOES_APROFUNDADO_IDS = [
   ...QUESTOES_EXPRESS_IDS,
 
-  // Augusto Cury (+2)
-  "q2",   // Brasil Neuroinclusivo: suporte escolar a autistas e TDAH
-  "q3",   // Programa Mulheres Vivas: monitoramento de agressores com tornozeleira
-
-  // Clariana Barão (+2)
-  "q13",  // Central integrada de proteção a mulheres e foco na Primeira Infância
-  "q16",  // Princípio de pedir dados uma única vez no serviço público (identidade digital)
-
-  // Edmilson Costa (+2)
+  // Economia (+6 = 12 total)
+  "q4",   // 10 mil Escolas de Empreendedorismo
+  "q11",  // Revisar partilha tributária e aumentar fatia de estados e municípios
   "q26",  // Reestatizar todas as estatais e Petrobras 100% pública operária
+  "q44",  // Reduzir ministérios e retomar Programa Nacional de Desestatização
+  "q84",  // Desindexar benefícios da seguridade social do salário mínimo
+  "q107", // Cancelar todas as privatizações realizadas no país
+
+  // Segurança (+6 = 12 total)
+  "q3",   // Programa Mulheres Vivas e tornozeleira em agressores
+  "q17",  // Monitoramento integral de fronteiras com drones e sensores remotos
+  "q38",  // Cumprimento de 100% da pena em regime fechado para crimes hediondos
+  "q95",  // Tipificar grandes facções como terrorismo doméstico (pena de 45 anos)
+  "q100", // Cumprimento de 90% da pena em regime fechado para feminicidas
+  "q144", // Extinguir o foro privilegiado para quase todas as autoridades
+
+  // Trabalho (+6 = 12 total)
   "q27",  // Reduzir jornada para 30h semanais e abolir escala 6x1
-
-  // Flávio Bolsonaro (+2)
-  "q41",  // Vouchers educacionais e creche para escolas particulares
-  "q46",  // Proteção integral da vida desde a concepção (veto a aborto)
-
-  // Hertz Dias (+2)
-  "q50",  // Suspender pagamento da dívida pública aos grandes bancos
-  "q56",  // Legalizar aborto seguro e gratuito no SUS
-
-  // Leonardo Avalanche (+2)
-  "q59",  // iPhone e internet grátis para formados em empreendedorismo digital
-  "q64",  // IPVA com valor fixo nacional de R$ 50/mês para carros de passeio
-
-  // Lula (+2)
-  "q72",  // Regulamentar trabalho em plataformas e aplicativos com direitos
-  "q79",  // Expandir exploração de novas reservas de petróleo pela Petrobras
-
-  // Renan Santos (+2)
-  "q84",  // Desindexar BPC do salário mínimo e desvincular gastos obrigatórios
-  "q85",  // Direito Penal do Inimigo e emprego das Forças Armadas com armamento pesado
-
-  // Ronaldo Caiado (+2)
-  "q100", // Assassinos de mulheres cumprem 90% em regime fechado e perdem bens
-  "q102", // Pronta resposta policial contra invasão de fazendas produtivas
-
-  // Rui Costa Pimenta (+2)
-  "q108", // Petrobras 100% estatal e gasolina cortada pela metade
-  "q111", // Dissolver a PM e armamento da população trabalhadora para autodefesa
-
-  // Samara (+2)
+  "q48",  // Reduzir jornada para 36h semanais sem corte salarial
+  "q51",  // Reconhecer vínculo empregatício e criar fundo para trabalhadores por app
+  "q63",  // Limitar taxa cobrada por apps de corrida a no máximo 3,5%
+  "q109", // Reduzir jornada máxima para 35h semanais
   "q120", // Frentes Emergenciais Públicas de Trabalho para pleno emprego
-  "q123", // Tarifa zero e estatização integral do transporte coletivo
 
-  // Wilson Grassi (+2)
-  "q134", // Saúde Única (One Health) integrando saúde humana, animal e saneamento
-  "q135", // Hospitais veterinários públicos e castração gratuita de cães e gatos
-
-  // Romeu Zema (+2)
-  "q144", // Extinguir foro privilegiado exceto para o Presidente da República
-  "q149", // Demissão de servidores públicos por insuficiência de rendimento
+  // Sociedade, Educação & Meio Ambiente (+6 = 12 total)
+  "q2",   // Programa Brasil Neuroinclusivo (autismo e TDAH nas escolas)
+  "q5",   // Projeto Brasil Oásis (dessalinização massiva no Semiárido)
+  "q46",  // Proteção integral da vida humana desde a concepção (veto ao aborto)
+  "q56",  // Legalizar aborto seguro e gratuito no SUS sem interferência estatal
+  "q79",  // Expandir exploração de novas reservas de petróleo pela Petrobras
+  "q134", // Modelo de Saúde Única (One Health) integrando saúde e animais
 ];
 
 export type QuizModeType = "express" | "aprofundado" | "completo";
@@ -196,12 +158,12 @@ export function obterQuestoesPorModo(modo: QuizModeType, categoria: QuizCategory
     if (modo === "express") {
       const mapa = new Map(todas.map((q) => [q.id, q]));
       const filtradas = QUESTOES_EXPRESS_IDS.map((id) => mapa.get(id)).filter(Boolean) as Question[];
-      return filtradas.length > 0 ? filtradas : todas.slice(0, 26);
+      return filtradas.length > 0 ? filtradas : todas.slice(0, 24);
     }
     if (modo === "aprofundado") {
       const mapa = new Map(todas.map((q) => [q.id, q]));
       const filtradas = QUESTOES_APROFUNDADO_IDS.map((id) => mapa.get(id)).filter(Boolean) as Question[];
-      return filtradas.length > 0 ? filtradas : todas.slice(0, 52);
+      return filtradas.length > 0 ? filtradas : todas.slice(0, 48);
     }
     return todas;
   }
@@ -209,10 +171,10 @@ export function obterQuestoesPorModo(modo: QuizModeType, categoria: QuizCategory
   // Filtrado por categoria temática
   const filtradasCat = filtrarPorCategoria(todas, categoria);
   if (modo === "express") {
-    return filtradasCat.slice(0, Math.min(26, filtradasCat.length));
+    return filtradasCat.slice(0, Math.min(24, filtradasCat.length));
   }
   if (modo === "aprofundado") {
-    return filtradasCat.slice(0, Math.min(52, filtradasCat.length));
+    return filtradasCat.slice(0, Math.min(48, filtradasCat.length));
   }
   return filtradasCat;
 }

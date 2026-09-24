@@ -44,8 +44,8 @@ export default function QuizIntro({ onStart }: QuizIntroProps) {
 
   // Ajusta os rótulos de contagem conforme a categoria escolhida
   const activeCatInfo = CATEGORIAS_QUIZ.find((c) => c.id === selectedCategory) || CATEGORIAS_QUIZ[0];
-  const expressCount = selectedCategory === "all" ? 26 : Math.min(26, activeCatInfo.count);
-  const aprofundadoCount = selectedCategory === "all" ? 52 : Math.min(52, activeCatInfo.count);
+  const expressCount = selectedCategory === "all" ? 24 : Math.min(24, activeCatInfo.count);
+  const aprofundadoCount = selectedCategory === "all" ? 48 : Math.min(48, activeCatInfo.count);
   const completoCount = activeCatInfo.count;
 
   return (
@@ -134,7 +134,7 @@ export default function QuizIntro({ onStart }: QuizIntroProps) {
               </span>
             </div>
             <p className="text-[11px] text-zinc-400 leading-snug">
-              26 propostas (exatamente 2 de cada um dos 13 candidatos, ~3 min).
+              24 propostas calibradas (6 de cada grande tema: Economia, Segurança, Trabalho e Sociedade, ~3 min).
             </p>
           </div>
 
@@ -158,7 +158,7 @@ export default function QuizIntro({ onStart }: QuizIntroProps) {
               </span>
             </div>
             <p className="text-[11px] text-zinc-400 leading-snug">
-              52 propostas (exatamente 4 de cada candidato para raio-X completo, ~6 min).
+              48 propostas calibradas (12 de cada tema com máxima precisão estatística, ~6 min).
             </p>
           </div>
 

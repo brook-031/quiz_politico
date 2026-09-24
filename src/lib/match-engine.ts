@@ -151,13 +151,18 @@ export function calcularAfinidade(
 
     let matchPercent = 50; // Se não houve respostas sobre o candidato, neutralidade
     if (dados.maxScore > 0) {
-      const calculo = ((dados.score / dados.maxScore) + 1) * 50;
+      // Suavização estatística para proteção contra amostras minúsculas (< 8 pontos de peso)
+      // Garante que nenhum candidato vença com 100% tendo apenas 1 ou 2 propostas respondidas
+      const shrinkage = dados.maxScore < 8 ? (8 - dados.maxScore) * 0.25 : 0;
+      const normalizer = dados.maxScore + shrinkage;
+      const calculo = ((dados.score / normalizer) + 1) * 50;
       matchPercent = Math.min(100, Math.max(0, Math.round(calculo)));
     }
 
     const calcSetor = (s: SetorScore) => {
       if (s.maxScore > 0) {
-        const val = ((s.score / s.maxScore) + 1) * 50;
+        const shrinkage = s.maxScore < 3 ? (3 - s.maxScore) * 0.3 : 0;
+        const val = ((s.score / (s.maxScore + shrinkage)) + 1) * 50;
         return Math.min(100, Math.max(0, Math.round(val)));
       }
       return matchPercent;
