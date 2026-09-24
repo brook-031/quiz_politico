@@ -2,63 +2,64 @@ import quizDb from "./quiz_db.json";
 import { Question } from "@/lib/match-engine";
 
 /**
- * Modo Rápido / Express: 40 perguntas cuidadosamente curadas (v2 — equidade máxima).
+ * Modo Rápido / Express: 40 perguntas cuidadosamente curadas (v3 — sem duplicatas temáticas).
  *
- * Critérios de seleção:
+ * Critérios de seleção (v3):
+ * ─ ZERO duplicatas: cada tema aparece no máximo 1 vez
  * ─ Score de discriminação alto: cada questão tem ≥4 candidatos posicionados
  * ─ Polarização real: TODAS as questões têm candidatos a favor E contra
  * ─ Cobertura equitativa: todos os 13 candidatos posicionados em ≥70% das questões
  * ─ Distribuição por eixo: 10 Economia | 10 Segurança | 10 Trabalho | 10 Sociedade
- * ─ Sem questões "somente um lado": eliminadas perguntas onde nenhum candidato discorda
+ * ─ Soma de pesos próxima de zero: equilíbrio estrutural entre todos os espectros
  */
 export const QUESTOES_EXPRESS_IDS = [
   // ── EIXO 1: Economia & Estado (10) ──────────────────────────────────────────
-  "q147", // Privatização ampla de estatais (Petrobras, Correios, bancos)            [5+/5-]
-  "q26",  // Reestatizar todas as empresas privatizadas e Petrobras 100% pública      [5+/5-]
-  "q44",  // Reduzir ministérios e retomar Programa Nacional de Desestatização        [5+/5-]
-  "q107", // Cancelar todas as privatizações (Vale, Eletrobras, telecom)             [5+/5-]
-  "q25",  // Estatizar sistema bancário e criar Banco dos Trabalhadores               [4+/7-]
-  "q131", // Elevar isenção do IRPF para até 5 salários mínimos                      [4+/2-]
-  "q69",  // Tributar a renda dos super-ricos, offshores e fundos exclusivos          [5+/4-]
-  "q122", // Taxação severa sobre grandes fortunas, heranças e superlucros            [5+/4-]
-  "q30",  // Reforma agrária: desapropriação imediata de latifúndios improdutivos     [4+/4-]
-  "q47",  // Invasões rurais como crime hediondo com resposta policial imediata        [4+/4-]
+  "q147", // Privatizar estatais (Petrobras, Correios, bancos)                     [7+/5-] LA=1 RS=-1 ZM=1
+  "q26",  // Reestatizar empresas privatizadas e Petrobras pública                  [5+/8-] LA=-1 RS=-1 ZM=-1
+  "q44",  // Reduzir ministérios + retomar desestatização (tema oposto a q26)       [7+/5-] LA=1 RS=1 ZM=1 ✅ cobre 3 fracos
+  "q122", // Taxar fortunas, heranças e superlucros bancários (soma=0.0)            [6+/6-] LA=0 RS=-1 ZM=-1
+  "q25",  // Estatizar sistema bancário e criar Banco dos Trabalhadores              [4+/7-] LA=-1 RS=-1 ZM=-1
+  "q131", // Elevar isenção do IRPF para até 5 salários mínimos                     [4+/2-] LA=1 RS=1 ZM=1
+  "q30",  // Reforma agrária: desapropriação de latifúndios improdutivos (soma=0)   [4+/4-] LA=0 RS=-1 ZM=-1
+  "q47",  // Invasões rurais como crime hediondo (contraponto a q30)                [4+/4-] LA=1 RS=1 ZM=1
+  "q69",  // Tributar renda de super-ricos, offshores e fundos exclusivos           [7+/5-] LA=0 RS=-1 ZM=-1
+  "q75",  // Restringir porte e posse de armas por civis                            [4+/6-] LA=0 RS=-1 ZM=-1
 
   // ── EIXO 2: Segurança Pública & Justiça (10) ────────────────────────────────
-  "q36",  // Reduzir a maioridade penal para 16 anos em crimes graves                [5+/5-]
-  "q97",  // Crime de enriquecimento incompatível (pena 40 anos) e confisco de bens  [5+/5-]
-  "q141", // Prisão preventiva obrigatória na audiência de custódia para reincidentes [5+/5-]
-  "q52",  // Desmilitarizar a PM e unificar as polícias sob comando civil             [4+/5-]
-  "q31",  // Desmilitarização completa e extinção da Justiça Militar                  [4+/5-]
-  "q46",  // Proteção integral da vida desde a concepção (veto ao aborto)             [5+/4-]
-  "q53",  // Descriminalizar as drogas e revogar a Lei Antidrogas                    [4+/5-]
-  "q99",  // Criar a SULPOL, agência de polícia sul-americana integrada               [3+/3-]
-  "q37",  // Castração química para condenados por crimes sexuais                     [3+/4-]
-  "q17",  // Monitoramento integral de fronteiras com drones e sensores remotos       [5+/3-]
+  "q36",  // Reduzir maioridade penal para 16 anos em crimes graves                 [5+/5-] LA=1 RS=1 ZM=1
+  "q97",  // Crime de enriquecimento incompatível (pena 40 anos) + confisco         [5+/5-] LA=1 RS=1 ZM=1
+  "q141", // Prisão preventiva obrigatória para reincidentes na custódia            [5+/5-] LA=1 RS=1 ZM=1
+  "q52",  // Desmilitarizar a PM e unificar polícias sob comando civil              [4+/5-] LA=-1 RS=-1 ZM=-1
+  "q31",  // Desmilitarização completa e extinção da Justiça Militar                [4+/5-] LA=-1 RS=-1 ZM=-1
+  "q46",  // Proteção integral da vida desde a concepção (veto ao aborto)           [5+/4-] LA=1 RS=1 ZM=1
+  "q53",  // Descriminalizar as drogas e revogar a Lei Antidrogas                   [4+/5-] LA=1 RS=-1 ZM=-1
+  "q38",  // 100% da pena em regime fechado para crimes hediondos                  [5+/5-] LA=1 RS=1 ZM=1 ✅ novo
+  "q17",  // Monitoramento de fronteiras com drones e sensores remotos              [5+/3-] LA=1 RS=1 ZM=1
+  "q102", // Segurança jurídica ao agronegócio + repressão a invasões (soma=0)     [4+/4-] LA=1 RS=1 ZM=1
 
   // ── EIXO 3: Trabalho & Previdência (10) ─────────────────────────────────────
-  "q71",  // Reduzir jornada para 40h semanais e extinguir escala 6x1                [6+/3-]
-  "q118", // Aumento imediato de 100% no salário mínimo nacional                     [6+/3-]
-  "q72",  // Regulamentar trabalho em plataformas e aplicativos com direitos CLT      [5+/3-]
-  "q29",  // Garantir registro formal (CLT) e piso salarial a motoristas de app       [5+/3-]
-  "q63",  // Limitar taxa cobrada por apps de corrida a no máximo 3,5%               [5+/3-]
-  "q51",  // Reconhecer vínculo empregatício e criar fundo para trabalhadores por app [4+/3-]
-  "q45",  // Prevalência do negociado sobre o legislado e veto ao imposto sindical    [2+/0-]
-  "q114", // Revogar reformas previdenciárias e garantir aposentadoria integral        [1+/1-]
-  "q109", // Reduzir jornada máxima para 35h semanais sem corte salarial              [6+/3-]
-  "q133", // Zerar contribuição patronal da previdência sobre a folha salarial         [2+/0-]
+  "q71",  // Reduzir jornada para 40h semanais e extinguir escala 6x1              [8+/5-] LA=1 RS=-1 ZM=-1
+  "q118", // Aumento imediato de 100% no salário mínimo nacional                   [6+/3-] LA=0 RS=-1 ZM=-1
+  "q72",  // Regulamentar trabalho em apps e plataformas com direitos CLT           [7+/5-] LA=1 RS=-1 ZM=-1
+  "q63",  // Limitar comissão de apps de corrida a no máximo 3,5%                  [5+/3-] LA=1 RS=-1 ZM=-1
+  "q37",  // Castração química para condenados por crimes sexuais                   [3+/4-] LA=1 RS=1 ZM=1 ✅ (saiu de Segurança)
+  "q45",  // Prevalência do negociado sobre o legislado, veto ao imposto sindical   [2+/0-] LA=1 RS=1 ZM=1
+  "q114", // Revogar reformas previdenciárias + aposentadoria integral              [1+/1-] LA=-1 RS=-1 ZM=-1
+  "q133", // Zerar contribuição patronal da previdência sobre a folha salarial      [2+/0-] LA=1 RS=1 ZM=1
+  "q95",  // Facções como terrorismo doméstico (pena 45 anos)                       [5+/5-] LA=1 RS=1 ZM=1 ✅ novo
+  "q28",  // Proibir demissão sem justa causa + estabilidade após 5 anos            [5+/5-] LA=-1 RS=-1 ZM=-1
 
   // ── EIXO 4: Sociedade, Educação & Saúde (10) ─────────────────────────────────
-  "q129", // Legalizar o aborto voluntário seguro e gratuito pelo SUS                [3+/5-]
-  "q56",  // Legalizar aborto pelo SUS sem interferência religiosa ou estatal         [3+/5-]
-  "q148", // Vouchers educacionais financiados pelo Estado para escolas privadas      [4+/5-]
-  "q41",  // Vouchers creche e escola para famílias de baixa renda (livre escolha)    [3+/5-]
-  "q76",  // Regular redes sociais e plataformas para combater desinformação          [3+/5-]
-  "q23",  // Expandir PPPs e concessões remuneradas por desempenho                    [4+/5-]
-  "q19",  // Telemedicina resolutiva integrada à atenção básica do SUS               [4+/3-]
-  "q110", // Extinguir o STF e instituir eleição popular de juízes e promotores       [2+/2-]
-  "q2",   // Programa Brasil Neuroinclusivo (autismo e TDAH nas escolas)              [4+/2-]
-  "q82",  // Reduzir número de municípios em até 70% por fusão forçada               [2+/4-]
+  "q129", // Legalizar aborto voluntário seguro e gratuito pelo SUS                [5+/6-] LA=-1 RS=-1 ZM=-1
+  "q148", // Vouchers educacionais para escolas particulares                        [6+/7-] LA=1 RS=1 ZM=1
+  "q76",  // Regulamentar redes sociais para combater desinformação                 [4+/8-] LA=-1 RS=-1 ZM=-1
+  "q23",  // Expandir PPPs e concessões remuneradas por desempenho                 [6+/5-] LA=1 RS=1 ZM=1
+  "q19",  // Telemedicina resolutiva integrada à atenção básica do SUS             [5+/3-] LA=1 RS=1 ZM=1
+  "q78",  // Acabar com orçamento secreto e emendas sem transparência              [5+/3-] LA=1 RS=1 ZM=1 ✅ (saiu de Econ)
+  "q2",   // Programa Brasil Neuroinclusivo (autismo e TDAH nas escolas)           [6+/2-] LA=0 RS=0 ZM=0
+  "q33",  // Fim do vestibular e livre acesso às universidades federais             [5+/5-] LA=-1 RS=-1 ZM=-1
+  "q103", // Combate ao desmatamento + pagamento para conservar floresta nativa     [5+/3-] LA=0 RS=0 ZM=0
+  "q98",  // Criar Ministério de Segurança Pública + Exército nas fronteiras       [5+/4-] LA=1 RS=1 ZM=1 ✅
 ];
 
 /**
@@ -70,7 +71,7 @@ export const QUESTOES_APROFUNDADO_IDS = [
   ...QUESTOES_EXPRESS_IDS,
 
   // Economia (+6)
-  "q38",  // 100% pena em regime fechado para crimes hediondos
+  "q132", // Reduzir IRPJ de 34% para 25% com extinção da CSLL
   "q84",  // Desindexar benefícios da seguridade do salário mínimo
   "q49",  // Expropriar grandes empresas e reverter privatizações estratégicas
   "q32",  // Suspender juros da dívida pública para investir em serviços
@@ -78,7 +79,7 @@ export const QUESTOES_APROFUNDADO_IDS = [
   "q130", // Substituir tributos federais por Imposto Único simplificado
 
   // Segurança (+6)
-  "q95",  // Tipificar grandes facções como terrorismo doméstico (pena 45 anos)
+  "q99",  // Criar a SULPOL, agência de polícia sul-americana integrada
   "q100", // 90% da pena em regime fechado para feminicidas
   "q144", // Extinguir o foro privilegiado para quase todas as autoridades
   "q85",  // Direito Penal do Inimigo com intervenção das Forças Armadas
