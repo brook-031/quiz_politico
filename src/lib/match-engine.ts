@@ -59,13 +59,23 @@ function identificarSetor(categoria: string): "economia" | "seguranca" | "trabal
 
 /**
  * Motor de Cálculo de Afinidade (Match Político 2026)
- * 
- * Regra:
+ *
+ * Regra base:
  * - Resposta do usuário: 1 (Concordo), -1 (Discordo), 0 (Pular/Neutro)
  * - score = Somatório de (Resposta * Peso do Candidato)
- * - maxScore = Somatório do valor absoluto dos pesos (nas questões respondidas com resposta != 0)
+ * - maxScore = Somatório do valor absoluto dos pesos (nas questões respondidas)
  * - Match % = ((score / maxScore) + 1) * 50
- * - Afinidade por eixo setorial (Economia, Segurança, Trabalho e Sociedade)
+ *
+ * Proteções anti-viés:
+ * 1. Bias Correction: candidatos com pesos majoritariamente positivos recebem
+ *    um desconto proporcional ao desequilíbrio entre somaPositivos e somaNegativos.
+ *    Sem isso, um candidato com 80% de propostas "+1" e 20% "-1" ganha vantagem
+ *    estrutural contra qualquer usuário que concorde com a maioria das propostas.
+ * 2. Coverage Penalty: candidatos com baixa cobertura (< 30% das questões respondidas
+ *    com posicionamento não-zero) recebem penalidade de até 8pp para evitar inflação
+ *    artificial pelo efeito do shrinkage.
+ * 3. Shrinkage: amostras minúsculas (< 8 pontos de peso total) são suavizadas para
+ *    evitar que 1-2 respostas gerem 100% de match.
  */
 export function calcularAfinidade(
   respostasUsuario: Record<string, number>,
@@ -78,6 +88,9 @@ export function calcularAfinidade(
   const placar: Record<string, {
     score: number;
     maxScore: number;
+    somaPositivos: number;  // Soma dos pesos positivos nas questões respondidas
+    somaNegativos: number;  // Soma dos valores absolutos dos pesos negativos
+    questoesComPosicionamento: number; // Questões onde candidato tem peso != 0
     concordancias: Array<{ id: string; texto: string; categoria: string }>;
     divergencias: Array<{ id: string; texto: string; categoria: string }>;
     neutros: number;
@@ -88,6 +101,9 @@ export function calcularAfinidade(
     placar[c.id] = {
       score: 0,
       maxScore: 0,
+      somaPositivos: 0,
+      somaNegativos: 0,
+      questoesComPosicionamento: 0,
       concordancias: [],
       divergencias: [],
       neutros: 0,
@@ -124,6 +140,11 @@ export function calcularAfinidade(
       const ponto = resposta * peso;
       placar[c.id].score += ponto;
       placar[c.id].maxScore += Math.abs(peso);
+      placar[c.id].questoesComPosicionamento += 1;
+
+      // Rastreia assimetria de pesos para bias correction
+      if (peso > 0) placar[c.id].somaPositivos += peso;
+      else placar[c.id].somaNegativos += Math.abs(peso);
 
       // Pontuação setorial
       placar[c.id].setores[setor].score += ponto;
@@ -145,18 +166,47 @@ export function calcularAfinidade(
     }
   }
 
+  // Total de questões efetivamente respondidas (resposta != 0)
+  const totalRespondidas = Object.values(respostasUsuario).filter(r => r !== 0).length;
+
   // Gera ranking final normalizado de 0% a 100%
   const ranking: CandidateMatchResult[] = candidatos.map(c => {
     const dados = placar[c.id];
 
     let matchPercent = 50; // Se não houve respostas sobre o candidato, neutralidade
     if (dados.maxScore > 0) {
-      // Suavização estatística para proteção contra amostras minúsculas (< 8 pontos de peso)
-      // Garante que nenhum candidato vença com 100% tendo apenas 1 ou 2 propostas respondidas
+      // ── 1. BIAS CORRECTION ──────────────────────────────────────────────────
+      // Candidatos com pesos majoritariamente positivos ganham vantagem estrutural:
+      // qualquer usuário que concorde com a maioria das questões tende a se alinhar
+      // mais com eles, independentemente do conteúdo real das propostas.
+      //
+      // Correção: descontamos do score bruto metade do desequilíbrio entre
+      // somaPositivos e somaNegativos. Isso centraliza o match em 50% quando o
+      // usuário não tem preferência clara, sem inverter candidatos bem alinhados.
+      //
+      // bias = somaPositivos - somaNegativos (> 0 = candidato é mais "pró-concordar")
+      // scoreCorrected = score - bias * 0.5
+      const bias = dados.somaPositivos - dados.somaNegativos;
+      const scoreCorrected = dados.score - bias * 0.5;
+
+      // ── 2. SHRINKAGE ────────────────────────────────────────────────────────
+      // Amostras minúsculas (< 8 pontos de peso) são suavizadas para evitar que
+      // 1-2 respostas gerem match extremo (100% ou 0%).
       const shrinkage = dados.maxScore < 8 ? (8 - dados.maxScore) * 0.25 : 0;
       const normalizer = dados.maxScore + shrinkage;
-      const calculo = ((dados.score / normalizer) + 1) * 50;
-      matchPercent = Math.min(100, Math.max(0, Math.round(calculo)));
+      const calculo = ((scoreCorrected / normalizer) + 1) * 50;
+
+      // ── 3. COVERAGE PENALTY ─────────────────────────────────────────────────
+      // Candidatos com posicionamento em menos de 30% das questões respondidas
+      // recebem penalidade crescente: dados insuficientes não devem inflar match.
+      const coberturaRatio = totalRespondidas > 0
+        ? dados.questoesComPosicionamento / totalRespondidas
+        : 1;
+      const coveragePenalty = coberturaRatio < 0.3
+        ? (0.3 - coberturaRatio) * 25  // Máximo ~7.5pp de penalidade
+        : 0;
+
+      matchPercent = Math.min(100, Math.max(0, Math.round(calculo - coveragePenalty)));
     }
 
     const calcSetor = (s: SetorScore) => {
